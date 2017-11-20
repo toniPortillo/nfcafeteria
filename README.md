@@ -4,7 +4,9 @@ Idea base
   Aplicación para mostrar menus y ofertas de las distintas cafeterias.
 
 Tecnologías que vamos a utilizar:
+ 
   -NodeJS, Ejs, Express, MongoDB.
+ 
   -Html, CSS:
  
 Puntos que abarcara la aplicación 
