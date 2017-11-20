@@ -1,0 +1,11 @@
+.login {
+    background: #56ab2f;
+    background: -webkit-linear-gradient(to right, #aBe063, #56ab2f);
+    background: linear-gradient(to right, #aBe063, #56ab2f);
+}
+
+.signup {
+    background: #000428;
+    background: -webkit-linear-gradient(to right, #004e92, #000428);
+    background: linear-gradient(to right, #004e92, #000428);
+}
