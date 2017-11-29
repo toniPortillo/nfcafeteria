@@ -26,6 +26,18 @@ const userSchema = new mongoose.Schema({
     },
 });
 
+/* OLIVIER */
+
+// const walletSchema = new mongoose.Schema({
+    // wallet: {
+        // email: String,
+        // password: String,
+		// coins : int
+    // }
+// });
+
+/* OLIVIER */
+
 userSchema.methods.generateHash = function (password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
@@ -35,3 +47,6 @@ userSchema.methods.validatePassword = function (password) {
 };
 
 module.exports = mongoose.model('User', userSchema);
+// /* OLIVIER */
+// module.exports = mongoose.model('Wallet', walletSchema);
+// /* OLIVIER */
