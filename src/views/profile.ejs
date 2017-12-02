@@ -16,27 +16,56 @@
             </header>
 
             <hr>
-
-            <div class="container">
-                <div class="col-sm-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title">
-                                <span class="fa fa-user"></span> Local
-                            </h3>
-                            <p>
-                                <strong>id</strong>: <%= user._id %> <br>
-                                <strong>email</strong>: <%= user.local.email %> <br>
-                                <strong>password</strong> <%= user.local.password %> <br>
-                            </p>
-                            <a href="/logout" class="btn btn.light">
-                                Logout
-                            </a>
-                        </div>
-                    </div>
+            <div class="card-deck">
+              <div class="card">
+                <div class="card-body">
+                  <div class="card-body">
+                      <h3 class="card-title">
+                          <span class="fa fa-user"></span> Local
+                      </h3>
+                      <p>
+                          <strong>id</strong>: <%= user._id %> <br>
+                          <strong>nombre:</strong> <%= user.local.nombre %> <br>
+                          <strong>apellidos:</strong> <%= user.local.apellidos %> </br>
+                          <strong>email:</strong>: <%= user.local.email %> <br>
+                          <strong>password:</strong> <%= user.local.password %> <br>
+                          <strong>edad:</strong> <%= user.local.edad %> <br>
+                          <strong>sexo:</strong> <%= user.local.sexo %> <br>
+                          <strong>estudios:</strong> <%= user.local.estudios %> <br>
+                          <strong>rol:</strong> <%= user.local.rol %> <br>
+                      </p>
+                  </div>
                 </div>
+                <div class="card-footer">
+                  <a href="/logout" class="btn btn.light">
+                      Logout
+                  </a>
+                  <a href="/completeProfile" class="btn btn.light">
+                      Complete profile
+                  </a>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <div class="card-body">
+                      <h3 class="card-title">
+                          <span class="fa fa-money"></span> Wallet
+                      </h3>
+                      <br><br>
+                        <blockquote class="blockquote text-center">
+                          <h3>
+                          <p class=mb-0><strong>Coins: 0</strong></p>
+                        </h3>
+                        </blockquote>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <a href="/logout" class="btn btn.light">
+                      Pagar
+                  </a>
+                </div>
+              </div>
             </div>
-
         </div>
     </body>
 </html>

@@ -14,7 +14,13 @@ const { url } = require('./config/database');
 
 mongoose.connect(url, {
     useMongoClient: true
-});
+    }, (err) => {
+      if(err){
+        throw err;
+      }else {
+        console.log('MongoDB connected')
+      }
+    });
 
 require('./config/passport')(passport);
 
@@ -37,7 +43,7 @@ app.use(passport.session());
 app.use(flash());
 
 
-//routes 
+//routes
 require('./app/routes')(app, passport);
 
 
