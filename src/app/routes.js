@@ -25,7 +25,7 @@ module.exports = (app, passport) => {
     app.post('/signup', passport.authenticate('local-signup', {
         successRedirect: '/profile',
         failureRedirect: '/signup',
-        failureFLash: true      
+        failureFLash: true
     }));
 
     app.get('/profile', isLoggedIn, (req, res) => {
@@ -45,4 +45,8 @@ module.exports = (app, passport) => {
         }
         return res.redirect('/');
     }
+
+    app.get('/completeProfile', (req, res) => {
+        res.render('completeProfile');
+    })
 };

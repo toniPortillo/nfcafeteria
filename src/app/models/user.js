@@ -3,8 +3,15 @@ const bcrypt = require('bcrypt-nodejs');
 
 const userSchema = new mongoose.Schema({
     local: {
-        email: String,
-        password: String
+        nombre: String,
+        apellidos: String,
+        email: {type:String, required:true},
+        password: {type:String, required:true},
+        edad: {type: Number, min: 0},
+        sexo: String,
+        estudios: String,
+        rol: String,
+        coins: {type: Number, min: 0}
     },
     facebook: {
         email: String,
@@ -26,18 +33,6 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-/* OLIVIER */
-
-// const walletSchema = new mongoose.Schema({
-    // wallet: {
-        // email: String,
-        // password: String,
-		// coins : int
-    // }
-// });
-
-/* OLIVIER */
-
 userSchema.methods.generateHash = function (password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
@@ -47,6 +42,3 @@ userSchema.methods.validatePassword = function (password) {
 };
 
 module.exports = mongoose.model('User', userSchema);
-// /* OLIVIER */
-// module.exports = mongoose.model('Wallet', walletSchema);
-// /* OLIVIER */
