@@ -1,3 +1,4 @@
+const User = require('../app/models/user');
 module.exports = (app, passport) => {
 
     app.get('/', (req, res) => {
@@ -28,6 +29,32 @@ module.exports = (app, passport) => {
         failureFLash: true
     }));
 
+    app.post('/addInfo', (req, res, next) => {
+        let body = req.body;
+        let params = req.params;
+        console.log(req.user.local.email);
+        console.log('--------');
+        console.log(body);
+        console.log('--------');
+        
+        User.findOne({'local.email': req.user.local.email}, (err, user) => {
+          user.local.name = body.name;
+          user.local.lastname = body.lastname;
+          user.local.age = body.age;
+          user.local.sex = body.sex;
+          user.local.studies = body.studies;
+          user.local.role = body.role;
+          user.save((error, user) => {
+            if(err) {
+              res.send('Error save user');
+            }else {
+              res.redirect('/profile');
+            }
+          })
+        })
+
+    });
+
     app.get('/profile', isLoggedIn, (req, res) => {
         res.render('profile', {
             user: req.user
@@ -44,9 +71,11 @@ module.exports = (app, passport) => {
             return next();
         }
         return res.redirect('/');
-    }
+    };
 
     app.get('/completeProfile', (req, res) => {
         res.render('completeProfile');
-    })
+    });
+
+
 };
