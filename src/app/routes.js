@@ -1,3 +1,5 @@
+var user = require ('./models/user');
+
 module.exports = (app, passport) => {
 
     app.get('/', (req, res) => {
@@ -48,5 +50,16 @@ module.exports = (app, passport) => {
 
     app.get('/completeProfile', (req, res) => {
         res.render('completeProfile');
-    })
+    });
+	
+	app.post('/completeProfile', isLoggedIn, function(req, res) {
+		user.update({_id: req.session.passport.user.id}, {
+			nombre: req.body.nombre 
+		}, function(err, numberAffected, rawResponse) {
+		   console.log('new profile update error');
+		});
+		res.render('completeProfile', {
+			user : req.user // get the user out of session and pass to template
+		});
+	});
 };
