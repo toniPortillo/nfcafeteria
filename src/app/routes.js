@@ -36,7 +36,7 @@ module.exports = (app, passport) => {
         console.log('--------');
         console.log(body);
         console.log('--------');
-        
+
         User.findOne({'local.email': req.user.local.email}, (err, user) => {
           user.local.name = body.name;
           user.local.lastname = body.lastname;
@@ -53,6 +53,71 @@ module.exports = (app, passport) => {
           })
         })
 
+    });
+
+    app.post('/addCoin', (req, res, next) => {
+      let aux = req.user.local.coins;
+      console.log(aux);
+      console.log
+
+      User.findOne({'local.email': req.user.local.email}, (err, user) => {
+        console.log(user.local.coins);
+        console.log('-------');
+        user.local.coins = aux + 1;
+        console.log(user.local.coins);
+        user.save((error, user) => {
+          if(err) {
+            res.send('Error save user');
+          }else {
+            res.redirect('/profile');
+          }
+        })
+      })
+    });
+
+    app.post('/subtractCoin', (req, res, next) => {
+        let body = req.body;
+        console.log('--------');
+        console.log(body);
+        console.log('--------');
+
+        if(body.coins >= req.user.local.coins) {
+          body.coins = req.user.local.coins;
+        };
+        if(body.coins <= 0) {
+          body.coins = 0;
+        }
+
+        User.findOne({'local.email': req.user.local.email}, (err, user) => {
+          user.local.coins -= body.coins;
+
+          user.save((error, user) => {
+            if(err) {
+              res.send('Error save user');
+            }else {
+              res.redirect('/profile');
+            }
+          })
+        })
+    });
+
+
+    app.get('/1ns34tC01n', isLoggedIn, (req, res) => {
+        res.render('1ns34tC01n', {
+            user: req.user
+        });
+    });
+
+    app.get('/c0d315m', isLoggedIn, (req, res) => {
+        res.render('c0d315m', {
+            user: req.user
+        });
+    });
+
+    app.get('/p41C01n5', isLoggedIn, (req, res) => {
+        res.render('p41C01n5', {
+            user: req.user
+        });
     });
 
     app.get('/profile', isLoggedIn, (req, res) => {
@@ -73,9 +138,10 @@ module.exports = (app, passport) => {
         return res.redirect('/');
     };
 
-    app.get('/completeProfile', (req, res) => {
-        res.render('completeProfile');
+    app.get('/addInformation', (req, res) => {
+        res.render('addInformation', {
+          user: req.user
+        });
     });
-
 
 };

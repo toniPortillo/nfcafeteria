@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
         sex: String,
         studies: String,
         role: String,
-        coins: {type: Number, min: 0}
+        coins: {type: Number, min: 0, default: 0}
     },
     facebook: {
         email: String,
