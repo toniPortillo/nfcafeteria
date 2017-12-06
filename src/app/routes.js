@@ -1,5 +1,4 @@
-var user = require ('./models/user');
-
+const User = require('../app/models/user');
 module.exports = (app, passport) => {
 
     app.get('/', (req, res) => {
@@ -30,6 +29,97 @@ module.exports = (app, passport) => {
         failureFLash: true
     }));
 
+    app.post('/addInfo', (req, res, next) => {
+        let body = req.body;
+        let params = req.params;
+        console.log(req.user.local.email);
+        console.log('--------');
+        console.log(body);
+        console.log('--------');
+
+        User.findOne({'local.email': req.user.local.email}, (err, user) => {
+          user.local.name = body.name;
+          user.local.lastname = body.lastname;
+          user.local.age = body.age;
+          user.local.sex = body.sex;
+          user.local.studies = body.studies;
+          user.local.role = body.role;
+          user.save((error, user) => {
+            if(err) {
+              res.send('Error save user');
+            }else {
+              res.redirect('/profile');
+            }
+          })
+        })
+
+    });
+
+    app.post('/addCoin', (req, res, next) => {
+      let aux = req.user.local.coins;
+      console.log(aux);
+      console.log
+
+      User.findOne({'local.email': req.user.local.email}, (err, user) => {
+        console.log(user.local.coins);
+        console.log('-------');
+        user.local.coins = aux + 1;
+        console.log(user.local.coins);
+        user.save((error, user) => {
+          if(err) {
+            res.send('Error save user');
+          }else {
+            res.redirect('/profile');
+          }
+        })
+      })
+    });
+
+    app.post('/subtractCoin', (req, res, next) => {
+        let body = req.body;
+        console.log('--------');
+        console.log(body);
+        console.log('--------');
+
+        if(body.coins >= req.user.local.coins) {
+          body.coins = req.user.local.coins;
+        };
+        if(body.coins <= 0) {
+          body.coins = 0;
+        }
+
+        User.findOne({'local.email': req.user.local.email}, (err, user) => {
+          user.local.coins -= body.coins;
+
+          user.save((error, user) => {
+            if(err) {
+              res.send('Error save user');
+            }else {
+              res.redirect('/profile');
+            }
+          })
+        })
+    });
+
+
+    app.get('/1ns34tC01n', isLoggedIn, (req, res) => {
+        res.render('1ns34tC01n', {
+            user: req.user
+        });
+    });
+
+    app.get('/c0d315m', isLoggedIn, (req, res) => {
+        res.render('c0d315m', {
+            user: req.user
+        });
+    });
+
+    app.get('/p41C01n5', isLoggedIn, (req, res) => {
+        res.render('p41C01n5', {
+            user: req.user
+        });
+    });
+
     app.get('/profile', isLoggedIn, (req, res) => {
         res.render('profile', {
             user: req.user
@@ -46,20 +136,12 @@ module.exports = (app, passport) => {
             return next();
         }
         return res.redirect('/');
-    }
+    };
 
-    app.get('/completeProfile', (req, res) => {
-        res.render('completeProfile');
+    app.get('/addInformation', (req, res) => {
+        res.render('addInformation', {
+          user: req.user
+        });
     });
-	
-	app.post('/completeProfile', isLoggedIn, function(req, res) {
-		user.update({_id: req.session.passport.user.id}, {
-			nombre: req.body.nombre 
-		}, function(err, numberAffected, rawResponse) {
-		   console.log('new profile update error');
-		});
-		res.render('completeProfile', {
-			user : req.user // get the user out of session and pass to template
-		});
-	});
+
 };

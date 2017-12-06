@@ -1,17 +1,17 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcrypt-nodejs');
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt-nodejs');
 
-var userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     local: {
-        nombre: String,
-        apellidos: String,
+        name: String,
+        lastname: String,
         email: {type:String, required:true},
         password: {type:String, required:true},
-        edad: {type: Number, min: 0},
-        sexo: String,
-        estudios: String,
-        rol: String,
-        coins: {type: Number, min: 0}
+        age: {type: Number, min: 0},
+        sex: String,
+        studies: String,
+        role: String,
+        coins: {type: Number, min: 0, default: 0}
     },
     facebook: {
         email: String,
