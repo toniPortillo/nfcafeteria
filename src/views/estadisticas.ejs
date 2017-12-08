@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Profile Page</title>
+        <% include partials/head %>
+    </head>
+
+    <body>
+        <div class="container">
+            <header class="text center">
+                <h1>Estadisticas</h1>
+
+            </header>
+
+            <hr>
+            <div class="card-deck">
+              <div class="card">
+                <div class="card-body">
+                  <div class="card-body">
+                      <h3 class="card-title">
+                          <span class="fa fa-user"></span> Local
+                      </h3>
+                      <p>
+						<strong>Users</strong>: <%= numberOfUsers %> <br>
+						<strong>Hombres</strong>: <%= numberOfMen %> <br>
+						<strong>Mujeres</strong>: <%= numberOfWomen %> <br>
+
+                      </p>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <a href="/logout" class="btn btn.light">
+                      Logout
+                  </a>
+                  <a href="/profile" class="btn btn.light">
+                      Profile
+                  </a>
+                </div>
+              </div>
+              
+            </div>
+        </div>
+    </body>
+</html>
