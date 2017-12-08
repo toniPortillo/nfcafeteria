@@ -27,98 +27,94 @@ module.exports = (app, passport, db) => {
 	
 	app.get('/createTimeStamp', (req, res) => {
 		var ts = new Stats();
+		ts.hour = new Date().getHours();
 		ts.day = new Date().getDay();
-		console.log(ts);
-		console.log(ts.createdAt);
+		//console.log(ts);
+		//console.log(ts.createdAt);
 		ts.save(function (err) {
-			console.log(ts.createdAt);
+			//console.log(ts.createdAt);
 		});
-		setTimeout(function () {
-			
-		}, 1000);
 		
 		res.redirect('/profile');
 	});
 	
+	
+	
 	app.get('/estadisticas', (req, res) => {
-		let stats = req.stats;//.local;
+		//let stats = req.stats;//.local;
 		var i = 0;
-		var nbOfUsers;
-		var nbOfMen;
-		var nbOfWomen;
+		var nbOfUsers = 0;
+		var nbOfMen = 0;
+		var nbOfWomen = 0;
+		var stats = [];
+		var cursorStats = Stats.find({}).cursor();
+		cursorStats.on('data', function(doc) {
+			//console.log(doc);// Called once for every document
+			stats.push(doc);
+		});	
 		
-		// console.log(nbOfUsers);
-		// console.log(nbOfMen);
-		// console.log(nbOfWomen);
-					
-					//MongoClient.connect(url, function (err, db) {
-					//	db.collection('stats', function (err, collection) {
-					//		collection.insert(new Stats());
-					//	});
-					//});
-					//stats.insert({ numberOfUsers : nbOfUsers, numberOfMen: nbOfMen, numberOfWomen: nbOfWomen });
-
-		Stats.find({}, function (err, stats) {
-			stats.forEach(function (oneStat) {
-				console.log("stat : ");
-				console.log(oneStat);
-			});
-		});			
-					
-		/*db.collection('users', function (err,collection) {
-			if (err) {
-				console.log("ERREUR LORS DE COLECITON");
-			} else {
-				var lol = collection.count();
-				console.log("nombre de documents dans la collection users");
-				console.log(lol);
-				res.render('estadisticas', {
-					numberOfUsers: lol,
-					numberOfMen: 999,
-					numberOfWomen: 999
-				});
+		var users = [];
+		var cursorUsers = User.find({}).cursor();
+		cursorUsers.on('data', function(doc) {
+			users.push(doc);
+			nbOfUsers += 1;
+			//console.log(user);
+			if (doc.local.sex) {
+				//console.log(user.local.sex);
+				doc.local.sex == "Female" ? nbOfWomen += 1 : nbOfMen += 1;
 			}
-			
-		});	*/
-
-		
-		User.find({}, function(err, users) {
-			if (err) {
-				console.log('error using User.find');
-				throw err;
-			} else {
-				var userArray = {};
-				console.log(users.length);
-				var nbOfUsers = 0;
-				var nbOfMen = 0;
-				var nbOfWomen = 0;
-				
-				users.forEach(function(user){
-					nbOfUsers += 1;
-					//console.log(user);
-					if (user.local.sex) {
-						//console.log(user.local.sex);
-						user.local.sex == "Female" ? nbOfWomen += 1 : nbOfMen += 1;
-					}
-				}); 
-				console.log("nb of user : " + nbOfUsers);
-				res.render('estadisticas', {
-					numberOfUsers : nbOfUsers,
-					numberOfMen : nbOfMen,
-					numberOfWomen : nbOfWomen
-				});
-				
-				// MongoClient.connect(url, function (err, db) {
-					// db.collection('stats', function (err, collection) {
-						// collection.insert(new Stats());
-					// });
-				// });
-				// stats.insert({ numberOfUsers : nbOfUsers, numberOfMen: 0, numberOfWomen: 0 })
-			}
-
 		});
 		
-		//res.redirect('/');	
+		User.find({}, function(err, users) {
+			var lol = users;
+			Stats.find({}, function(err, stats, lol) {
+				console.log("DANS STATS.FIND");
+				console.log(users);
+				
+				var tab = {
+				nbOfUsers:0,
+				nbOfMen:0,
+				nbOfWomen:0
+				}	
+				users.forEach(function(user) {
+					tab.nbOfUsers += 1;
+						//console.log(user);
+					if (user.local.sex) {
+						//console.log(user.local.sex);
+						user.local.sex == "Female" ? tab.nbOfWomen += 1 : tab.nbOfMen += 1;
+					}
+				});
+				
+				var tabStats = {
+					0: 0,
+					1: 0,
+					2: 0,
+					3: 0,
+					4: 0, 
+					5: 0,
+					6: 0
+				};
+				
+				stats.forEach(function(stat) {
+					//console.log(stat);
+					tabStats[stat.day] += 1;
+				});
+				console.log(tabStats);
+				
+				res.render('estadisticas', {
+					numberOfUsers : tab.nbOfUsers,
+					numberOfMen : tab.nbOfMen,
+					numberOfWomen : tab.nbOfWomen,
+					statsTab : tabStats
+				});
+			});
+			
+			/*console.log("avant appel de stats.find");
+			console.log(tab);*/
+	
+			
+		});
+			
 	});
 
     app.get('/signup', (req, res) => {
@@ -134,10 +130,17 @@ module.exports = (app, passport, db) => {
     }));
 	
 	app.get('/swag', (req,res) => {
-		console.log("SWAGGGGGGG");
-		console.log(req.user.local.email);
+		var ts = new Stats();
+		ts.hour = new Date().getHours();
+		ts.day = new Date().getDay();
+		//console.log(ts);
+		//console.log(ts.createdAt);
+		ts.save(function (err) {
+			//console.log(ts.createdAt);
+		});
 		
 		res.redirect('/profile');
+		
 	});
 
     app.post('/addInfo', (req, res, next) => {
