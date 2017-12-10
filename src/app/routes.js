@@ -99,20 +99,56 @@ module.exports = (app, passport, db) => {
 					//console.log(stat);
 					tabStats[stat.day] += 1;
 				});
-				console.log(tabStats);
+				//console.log(tabStats);
 				
+				var jsonTab = [
+					{
+						"Day" : "Sunday",
+						"Freq" : 0
+					},
+					{
+						"Day" : "Monday",
+						"Freq" : 0
+					},
+					{
+						"Day" : "Tuesday",
+						"Freq" : 0
+					},
+					{
+						"Day" : "Wednesday",
+						"Freq" : 0
+					},
+					{
+						"Day" : "Thursday",
+						"Freq" : 0
+					},
+					{
+						"Day" : "Friday",
+						"Freq" : 0
+					},
+					{
+						"Day" : "Saturday",
+						"Freq" : 0
+					}
+				];
+				
+				var tabStatsFinal = [];
+				var i = 0;
+				for (var key in tabStats) {
+					jsonTab[i].Freq = tabStats[i];
+					
+					++i;
+				}
+				
+				console.log(jsonTab);
+						
 				res.render('estadisticas', {
 					numberOfUsers : tab.nbOfUsers,
 					numberOfMen : tab.nbOfMen,
 					numberOfWomen : tab.nbOfWomen,
-					statsTab : tabStats
+					statsTab : jsonTab
 				});
-			});
-			
-			/*console.log("avant appel de stats.find");
-			console.log(tab);*/
-	
-			
+			});			
 		});
 			
 	});
