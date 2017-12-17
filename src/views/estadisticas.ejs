@@ -63,18 +63,23 @@
 						<strong>Mujeres</strong>: <%= numberOfWomen %> <br>
 
                       </p>
-					
+					<h3> Proporción de conexión por día </h3>
 					<p id = "stats"></p>
+						
+						
+					<h3> Horas de conexión por día </h3>
 					<select id="inds">
-						<option value="0" selected="selected">Sunday</option>
-						<option value="1">Monday</option>
-						<option value="2">Tuesday</option>
-						<option value="3">Wednesday</option>
-						<option value="4">Thursday</option>
-						<option value="5">Friday</option>
-						<option value="6">Saturday</option>
+							<option value="0" selected="selected">Sunday</option>
+							<option value="1">Monday</option>
+							<option value="2">Tuesday</option>
+							<option value="3">Wednesday</option>
+							<option value="4">Thursday</option>
+							<option value="5">Friday</option>
+							<option value="6">Saturday</option>
 					</select>
-					<p id = "stats2"></p>
+					<p id = "stats2">
+						
+					</p>
 					
 
                   </div>
@@ -235,7 +240,7 @@
 					return null;
 				  });*/
 			  svg.selectAll(".y.axis2").remove();
-			  //svg.selectAll("x axis2").remove();
+			  svg.selectAll(".x.axis2").remove();
 
 			  // scale the range of the data
 			  x.domain(data.map(function(d) { return d.Hour; }));
@@ -285,19 +290,6 @@
 				data = updateData(section, data2);
 				updateGraph(data);
 
-			  
-			  //debugger
-			  
-				/*data.forEach(function(d) {
-					d.value = +d.value;
-					//d.year = parseDate(String(d.year));
-					d.active = true;
-				});*/
-    		
-		    
-		    //debugger
-				/*updateGraph(data);
-				jQuery('h1.page-header').html(section);*/
 			});
 		</script>
 		
