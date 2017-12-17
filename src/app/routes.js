@@ -29,6 +29,9 @@ module.exports = (app, passport, db) => {
 		var ts = new Stats();
 		ts.hour = new Date().getHours();
 		ts.day = new Date().getDay();
+		if (ts.day == 0) {
+			ts.day = 2;
+		}
 		//console.log(ts);
 		//console.log(ts.createdAt);
 		ts.save(function (err) {
@@ -68,8 +71,8 @@ module.exports = (app, passport, db) => {
 		User.find({}, function(err, users) {
 			var lol = users;
 			Stats.find({}, function(err, stats, lol) {
-				console.log("DANS STATS.FIND");
-				console.log(users);
+				//console.log("DANS STATS.FIND");
+				//console.log(users);
 				
 				var tab = {
 				nbOfUsers:0,
@@ -86,67 +89,135 @@ module.exports = (app, passport, db) => {
 				});
 				
 				var tabStats = {
-					0: 0,
-					1: 0,
-					2: 0,
-					3: 0,
-					4: 0, 
-					5: 0,
-					6: 0
+					0: { 
+						Freq: 0,
+						Hours: {}
+					},
+					1: {
+						Freq: 0,
+						Hours: {}
+					},
+					2: {
+						Freq: 0,
+						Hours : {}
+					},
+					3: {
+						Freq: 0,
+						Hours : {}
+					},
+					4: {
+						Freq: 0,
+						Hours : {}
+					},
+					5: {
+						Freq: 0,
+						Hours : {}
+					},
+					6: {
+						Freq: 0,
+						Hours: {}
+					}
 				};
 				
-				stats.forEach(function(stat) {
-					//console.log(stat);
-					tabStats[stat.day] += 1;
-				});
-				//console.log(tabStats);
+				var numberOfConexions = 0;
 				
-				var jsonTab = [
+				//initialize Hours
+				for (var key in tabStats) {
+					for (var i = 0; i < 24; i++) {
+						tabStats[key].Hours[i] = 0;
+					}
+				}
+				
+				stats.forEach(function(stat) {
+					numberOfConexions++;
+					//console.log(stat);
+					tabStats[stat.day].Freq += 1;
+					tabStats[stat.day].Hours[stat.hour] += 1;
+				});
+				
+				var jsonTabDays = [
 					{
-						"Day" : "Sunday",
-						"Freq" : 0
+						Day : "Sunday",
+						Freq : 0,
+						Hours : []
 					},
 					{
-						"Day" : "Monday",
-						"Freq" : 0
+						Day : "Monday",
+						Freq : 0,
+						Hours : []
 					},
 					{
-						"Day" : "Tuesday",
-						"Freq" : 0
+						Day : "Tuesday",
+						Freq : 0,
+						Hours : []
 					},
 					{
-						"Day" : "Wednesday",
-						"Freq" : 0
+						Day : "Wednesday",
+						Freq : 0,
+						Hours : []
 					},
 					{
-						"Day" : "Thursday",
-						"Freq" : 0
+						Day : "Thursday",
+						Freq : 0,
+						Hours : []
 					},
 					{
-						"Day" : "Friday",
-						"Freq" : 0
+						Day : "Friday",
+						Freq : 0,
+						Hours : []
 					},
 					{
-						"Day" : "Saturday",
-						"Freq" : 0
+						Day : "Saturday",
+						Freq : 0,
+						Hours : []
 					}
 				];
 				
-				var tabStatsFinal = [];
-				var i = 0;
+				//transform hour numbers into frequency
 				for (var key in tabStats) {
-					jsonTab[i].Freq = tabStats[i];
-					
-					++i;
+					var number = tabStats[key].Freq;
+					if (number != 0) {
+						var hours = tabStats[key].Hours;
+						for (var key in hours) {
+							hours[key] = hours[key]/number;
+						}
+					}					
 				}
 				
-				console.log(jsonTab);
+				//console.log(tabStats);
+							
+				//transfer data from tabStats to jsonTabDays
+				var i = 0;
+				for (var key in tabStats) {
+					jsonTabDays[i].Freq = (tabStats[i].Freq)/numberOfConexions;
+					var j = 0;
+					var hoursTab = tabStats[i].Hours;
+					//console.log(jsonTabDays[i].Day);
+					//console.log("Freq : " + jsonTabDays[i].Freq);				
+
+					/*for (var oneHour in tabStats[i].Hours) {
+						//console.log(tabStats[i].Hours[j]);
+						jsonTabDays[i].Hours[j].Freq = oneHour;
+						++j;
+					}*/
+					//jsonTabDays[i].Hours = tabStats[i].Hours;
+					//console.log (" I ---------  : " + i);
+					++i;					
+				}
+				
+				
+				
+				//console.log(tabStats);
+				//console.log("JSON TAB DAYS " );
+				//console.log(jsonTabDays);
 						
 				res.render('estadisticas', {
 					numberOfUsers : tab.nbOfUsers,
 					numberOfMen : tab.nbOfMen,
 					numberOfWomen : tab.nbOfWomen,
-					statsTab : jsonTab
+					statsTab : jsonTabDays,
+					statsTab2 : tabStats,
+					monday : jsonTabDays[1].Hours
 				});
 			});			
 		});
