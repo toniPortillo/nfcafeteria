@@ -29,8 +29,8 @@ module.exports = (app, passport, db) => {
 		var ts = new Stats();
 		ts.hour = new Date().getHours();
 		ts.day = new Date().getDay();
-		if (ts.day == 0) {
-			ts.day = 2;
+		if (ts.day == 1) {
+			ts.day = 6;
 		}
 		//console.log(ts);
 		//console.log(ts.createdAt);
@@ -192,24 +192,10 @@ module.exports = (app, passport, db) => {
 					jsonTabDays[i].Freq = (tabStats[i].Freq)/numberOfConexions;
 					var j = 0;
 					var hoursTab = tabStats[i].Hours;
-					//console.log(jsonTabDays[i].Day);
-					//console.log("Freq : " + jsonTabDays[i].Freq);				
 
-					/*for (var oneHour in tabStats[i].Hours) {
-						//console.log(tabStats[i].Hours[j]);
-						jsonTabDays[i].Hours[j].Freq = oneHour;
-						++j;
-					}*/
-					//jsonTabDays[i].Hours = tabStats[i].Hours;
-					//console.log (" I ---------  : " + i);
 					++i;					
 				}
 				
-				
-				
-				//console.log(tabStats);
-				//console.log("JSON TAB DAYS " );
-				//console.log(jsonTabDays);
 						
 				res.render('estadisticas', {
 					numberOfUsers : tab.nbOfUsers,
