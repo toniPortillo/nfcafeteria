@@ -1,4 +1,8 @@
 const User = require('../app/models/user');
+const Stats = require('../app/models/stats');
+const mongoose = require('mongoose');
+var MongoClient = require('mongodb').MongoClient;
+
 module.exports = (app, passport) => {
 
     app.get('/', (req, res) => {
@@ -12,10 +16,26 @@ module.exports = (app, passport) => {
     });
 
     app.post('/login', passport.authenticate('local-login', {
-        successRedirect: '/profile',
+        successRedirect: '/createTimeStamp',
         failureRedirect: '/login',
         failureFLash: true
     }));
+	
+	app.get('/createTimeStamp', (req, res) => {
+		var ts = new Stats();
+		ts.hour = new Date().getHours();
+		ts.day = new Date().getDay();
+		if (ts.hour == 21) {
+			ts.hour = 3;
+		}
+		//console.log(ts);
+		//console.log(ts.createdAt);
+		ts.save(function (err) {
+			//console.log(ts.createdAt);
+		});
+		
+		res.redirect('/profile');
+	});
 
     app.get('/signup', (req, res) => {
         res.render('signup', {
@@ -23,11 +43,188 @@ module.exports = (app, passport) => {
         });
     });
 
-    app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect: '/profile',
+    app.post('/signup', passport.authenticate('local-signup',{
+        successRedirect: '/createTimeStampSignUp',
         failureRedirect: '/signup',
         failureFLash: true
     }));
+	
+	app.get('/createTimeStampSignUp', (req,res) => {
+		var ts = new Stats();
+		ts.hour = new Date().getHours();
+		ts.day = new Date().getDay();
+		ts.save(function (err) {
+			//console.log(ts.createdAt);
+		});
+		
+		res.redirect('/profile');
+		
+	});
+	
+	app.get('/estadisticas', (req, res) => {
+		var i = 0;
+		var nbOfUsers = 0;
+		var nbOfMen = 0;
+		var nbOfWomen = 0;
+		var stats = [];
+		var cursorStats = Stats.find({}).cursor();
+		cursorStats.on('data', function(doc) {
+			stats.push(doc);
+		});	
+		
+		var users = [];
+		var cursorUsers = User.find({}).cursor();
+		cursorUsers.on('data', function(doc) {
+			users.push(doc);
+			nbOfUsers += 1;
+			//console.log(user);
+			if (doc.local.sex) {
+				//console.log(user.local.sex);
+				doc.local.sex == "Female" ? nbOfWomen += 1 : nbOfMen += 1;
+			}
+		});
+		
+		User.find({}, function(err, users) {
+			var lol = users;
+			Stats.find({}, function(err, stats, lol) {
+				//console.log("DANS STATS.FIND");
+				//console.log(users);
+				
+				var tab = {
+				nbOfUsers:0,
+				nbOfMen:0,
+				nbOfWomen:0
+				}	
+				users.forEach(function(user) {
+					tab.nbOfUsers += 1;
+						//console.log(user);
+					if (user.local.sex) {
+						//console.log(user.local.sex);
+						user.local.sex == "Female" ? tab.nbOfWomen += 1 : tab.nbOfMen += 1;
+					}
+				});
+				
+				var tabStats = {
+					0: { 
+						Freq: 0,
+						Hours: {}
+					},
+					1: {
+						Freq: 0,
+						Hours: {}
+					},
+					2: {
+						Freq: 0,
+						Hours : {}
+					},
+					3: {
+						Freq: 0,
+						Hours : {}
+					},
+					4: {
+						Freq: 0,
+						Hours : {}
+					},
+					5: {
+						Freq: 0,
+						Hours : {}
+					},
+					6: {
+						Freq: 0,
+						Hours: {}
+					}
+				};
+				
+				var numberOfConexions = 0;
+				
+				//initialize Hours
+				for (var key in tabStats) {
+					for (var i = 0; i < 24; i++) {
+						tabStats[key].Hours[i] = 0;
+					}
+				}
+				
+				stats.forEach(function(stat) {
+					numberOfConexions++;
+					//console.log(stat);
+					tabStats[stat.day].Freq += 1;
+					tabStats[stat.day].Hours[stat.hour] += 1;
+				});
+				
+				var jsonTabDays = [
+					{
+						Day : "Sunday",
+						Freq : 0,
+						Hours : []
+					},
+					{
+						Day : "Monday",
+						Freq : 0,
+						Hours : []
+					},
+					{
+						Day : "Tuesday",
+						Freq : 0,
+						Hours : []
+					},
+					{
+						Day : "Wednesday",
+						Freq : 0,
+						Hours : []
+					},
+					{
+						Day : "Thursday",
+						Freq : 0,
+						Hours : []
+					},
+					{
+						Day : "Friday",
+						Freq : 0,
+						Hours : []
+					},
+					{
+						Day : "Saturday",
+						Freq : 0,
+						Hours : []
+					}
+				];
+				
+				//transform hour numbers into frequency
+				for (var key in tabStats) {
+					var number = tabStats[key].Freq;
+					if (number != 0) {
+						var hours = tabStats[key].Hours;
+						for (var key in hours) {
+							hours[key] = hours[key]/number;
+						}
+					}					
+				}
+				
+				//console.log(tabStats);
+							
+				//transfer data from tabStats to jsonTabDays
+				var i = 0;
+				for (var key in tabStats) {
+					jsonTabDays[i].Freq = (tabStats[i].Freq)/numberOfConexions;
+					var j = 0;
+					var hoursTab = tabStats[i].Hours;
+
+					++i;					
+				}
+				
+						
+				res.render('estadisticas', {
+					numberOfUsers : tab.nbOfUsers,
+					numberOfMen : tab.nbOfMen,
+					numberOfWomen : tab.nbOfWomen,
+					statsTab : jsonTabDays,
+					statsTab2 : tabStats,
+					monday : jsonTabDays[1].Hours
+				});
+			});			
+		});
+			
+	});
 
     app.post('/addInfo', (req, res, next) => {
         let body = req.body;
@@ -108,10 +305,21 @@ module.exports = (app, passport) => {
         });
     });
 
+    app.get('/secretPage', (req, res) => {
+		req.session.isCamarero = true;
+		res.redirect('/c0d315m');
+	});
+
     app.get('/c0d315m', isLoggedIn, (req, res) => {
-        res.render('c0d315m', {
-            user: req.user
-        });
+		var passedVariable = req.session.isCamarero;
+		if (passedVariable == true) {
+			req.session.isCamarero = false;
+			res.render('c0d315m', {
+				user: req.user
+			});
+		} else {
+			res.redirect('/');
+		}
     });
 
     app.get('/p41C01n5', isLoggedIn, (req, res) => {
