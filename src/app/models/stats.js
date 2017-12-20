@@ -5,7 +5,7 @@ var timestamps = require('mongoose-timestamp');
 var statsSchema = new mongoose.Schema({
 	day : {type : Number, min : 0},
 	hour : {type : Number, min : 0}
-}, /*{
+} /*{
 	timestamps: true
 }*/);
 

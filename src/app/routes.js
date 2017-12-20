@@ -20,7 +20,7 @@ module.exports = (app, passport) => {
         failureRedirect: '/login',
         failureFLash: true
     }));
-	
+
 	app.get('/createTimeStamp', (req, res) => {
 		var ts = new Stats();
 		ts.hour = new Date().getHours();
@@ -33,7 +33,7 @@ module.exports = (app, passport) => {
 		ts.save(function (err) {
 			//console.log(ts.createdAt);
 		});
-		
+
 		res.redirect('/profile');
 	});
 
@@ -48,7 +48,7 @@ module.exports = (app, passport) => {
         failureRedirect: '/signup',
         failureFLash: true
     }));
-	
+
 	app.get('/createTimeStampSignUp', (req,res) => {
 		var ts = new Stats();
 		ts.hour = new Date().getHours();
@@ -56,11 +56,11 @@ module.exports = (app, passport) => {
 		ts.save(function (err) {
 			//console.log(ts.createdAt);
 		});
-		
+
 		res.redirect('/profile');
-		
+
 	});
-	
+
 	app.get('/estadisticas', (req, res) => {
 		var i = 0;
 		var nbOfUsers = 0;
@@ -70,8 +70,8 @@ module.exports = (app, passport) => {
 		var cursorStats = Stats.find({}).cursor();
 		cursorStats.on('data', function(doc) {
 			stats.push(doc);
-		});	
-		
+		});
+
 		var users = [];
 		var cursorUsers = User.find({}).cursor();
 		cursorUsers.on('data', function(doc) {
@@ -83,18 +83,18 @@ module.exports = (app, passport) => {
 				doc.local.sex == "Female" ? nbOfWomen += 1 : nbOfMen += 1;
 			}
 		});
-		
+
 		User.find({}, function(err, users) {
 			var lol = users;
 			Stats.find({}, function(err, stats, lol) {
 				//console.log("DANS STATS.FIND");
 				//console.log(users);
-				
+
 				var tab = {
 				nbOfUsers:0,
 				nbOfMen:0,
 				nbOfWomen:0
-				}	
+				}
 				users.forEach(function(user) {
 					tab.nbOfUsers += 1;
 						//console.log(user);
@@ -103,9 +103,9 @@ module.exports = (app, passport) => {
 						user.local.sex == "Female" ? tab.nbOfWomen += 1 : tab.nbOfMen += 1;
 					}
 				});
-				
+
 				var tabStats = {
-					0: { 
+					0: {
 						Freq: 0,
 						Hours: {}
 					},
@@ -134,23 +134,23 @@ module.exports = (app, passport) => {
 						Hours: {}
 					}
 				};
-				
+
 				var numberOfConexions = 0;
-				
+
 				//initialize Hours
 				for (var key in tabStats) {
 					for (var i = 0; i < 24; i++) {
 						tabStats[key].Hours[i] = 0;
 					}
 				}
-				
+
 				stats.forEach(function(stat) {
 					numberOfConexions++;
 					//console.log(stat);
 					tabStats[stat.day].Freq += 1;
 					tabStats[stat.day].Hours[stat.hour] += 1;
 				});
-				
+
 				var jsonTabDays = [
 					{
 						Day : "Sunday",
@@ -188,7 +188,7 @@ module.exports = (app, passport) => {
 						Hours : []
 					}
 				];
-				
+
 				//transform hour numbers into frequency
 				for (var key in tabStats) {
 					var number = tabStats[key].Freq;
@@ -197,11 +197,11 @@ module.exports = (app, passport) => {
 						for (var key in hours) {
 							hours[key] = hours[key]/number;
 						}
-					}					
+					}
 				}
-				
+
 				//console.log(tabStats);
-							
+
 				//transfer data from tabStats to jsonTabDays
 				var i = 0;
 				for (var key in tabStats) {
@@ -209,10 +209,10 @@ module.exports = (app, passport) => {
 					var j = 0;
 					var hoursTab = tabStats[i].Hours;
 
-					++i;					
+					++i;
 				}
-				
-						
+
+
 				res.render('estadisticas', {
 					numberOfUsers : tab.nbOfUsers,
 					numberOfMen : tab.nbOfMen,
@@ -221,9 +221,9 @@ module.exports = (app, passport) => {
 					statsTab2 : tabStats,
 					monday : jsonTabDays[1].Hours
 				});
-			});			
+			});
 		});
-			
+
 	});
 
     app.post('/addInfo', (req, res, next) => {
@@ -300,26 +300,26 @@ module.exports = (app, passport) => {
 
 
     app.get('/1ns34tC01n', isLoggedIn, (req, res) => {
+      var passedVariable = req.session.isCamarero;
+      if (passedVariable == true) {
+        req.session.isCamarero = false;
         res.render('1ns34tC01n', {
-            user: req.user
+          user: req.user
         });
+      } else {
+        res.redirect('/');
+      }
     });
 
     app.get('/secretPage', (req, res) => {
-		req.session.isCamarero = true;
-		res.redirect('/c0d315m');
-	});
+      req.session.isCamarero = true;
+      res.redirect('/1ns34tC01n');
+    });
 
     app.get('/c0d315m', isLoggedIn, (req, res) => {
-		var passedVariable = req.session.isCamarero;
-		if (passedVariable == true) {
-			req.session.isCamarero = false;
 			res.render('c0d315m', {
 				user: req.user
 			});
-		} else {
-			res.redirect('/');
-		}
     });
 
     app.get('/p41C01n5', isLoggedIn, (req, res) => {
